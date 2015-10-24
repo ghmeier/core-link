@@ -1,21 +1,21 @@
 {
-  "name": "express-boilerplate",
-  "version": "0.0.1",
-  "description": "Express Boilerplate Project",
+  "name": "core-link",
+  "version": "0.1.0",
+  "description": "Core Link",
   "keywords": [
   	"express",
 	"starter"
   ],
-  "homepage": "https://github.com/ghmeier/express-boilerplate",
+  "homepage": "https://github.com/ghmeier/core-link",
   "author": "Garret Meier <meier.garret@gmail.com>",
   "contributors": [
-  	
+  	"Luke Geiken":"<lgeiken@iastate.edu>"
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/ghmeier/express-boilerplate.git"
+    "url": "git://github.com/ghmeier/core-link.git"
   },
-  "bugs:": "https://github.com/ghmeier/express-boilerplate/issues",
+  "bugs:": "https://github.com/ghmeier/core-link/issues",
   "engines": {
     "node": ">= v0.10.0"
   },

@@ -9,7 +9,7 @@
   "homepage": "https://github.com/ghmeier/core-link",
   "author": "Garret Meier <meier.garret@gmail.com>",
   "contributors": [
-  	"Luke Geiken":"<lgeiken@iastate.edu>"
+  	"Luke Geiken <lgeiken@iastate.edu>"
   ],
   "repository": {
     "type": "git",

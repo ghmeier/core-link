@@ -404,6 +404,8 @@ module.exports = function FleetHelper(fb_root)
     }
 
     this.level_harvester = function(req,res){
+
+
         var id = req.params.id;
         var ship_id = req.params.position;
         var h_id = req.params.h_position;
@@ -414,6 +416,11 @@ module.exports = function FleetHelper(fb_root)
         var fleet = new Fleet(fb_root,id,function(fleet){
             var ship = fleet.data.ships[ship_id];
             var harvester = ship.harvesters[h_id];
+
+            if(fleet.data.resources.aluminium < (harvester.level + 1) * 50){
+                res.json({success:false,message:"Not enough aluminium."});
+                return;
+            }
 
             harvester.level++;
             harvester.speed += harvester.level *harvester.speed;

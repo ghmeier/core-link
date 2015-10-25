@@ -485,9 +485,10 @@ module.exports = function FleetHelper(fb_root)
             fleet.data.resources["steel"] -= ship.harvester_cost;
             ship.harvesters.push(Fleet.makeHarvester());
             ship.harvester_cost = Fleet.harvesterCost(ship.harvesters.length);
-            fleet.set("ships",fleet.data.ships);
+            fleet.update(fleet.data,function(data){
 
-            res.json({success:true,data:fleet.data});
+                res.json({success:true,data:fleet.data});
+            });
         });
     }
 

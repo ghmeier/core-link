@@ -97,7 +97,7 @@ module.exports = function FleetHelper(fb_root)
             var count = Math.floor(Math.random() * snapshot.numChildren());
 
             var parentId = Object.keys(snapshot.val())[count];
-            planetHelper.makePlanet(name+"'s home world",0,refId,parentId,100,function(planet){
+            planetHelper.makePlanet(name+"'s home world",0,name,parentId,100,function(planet){
                 var planetId = planet.id;
                fb_root.child("names").child(name).once("value",function(snap){
 

@@ -161,8 +161,21 @@ module.exports = function FleetHelper(fb_root)
             }
 
             var ships = fleet.get("ships") || [];
+            var alu_cost = ships.length * (ships.length * 50);
+            var oil_cost = (ships.length * 500) / 15;
+            var steel_cost = Math.pow(16,ships.length) + 100;
+            if (fleet.data.resources["steel"] < steel_cost ||
+                fleet.data.resources['aluminium'] < alu_cost ||
+                fleet.data.resources['oil'] < oil_cost){
+                res.json({success:false,message:"Not enough resources."});
+                return;
+            }
+
+            fleet.data.resources["steel"] -= steel_cost;
+            fleet.data.resources['aluminium'] -=alu_cost;
+            fleet.data.resources['oil'] -= oil_cost;
             ships.push(Fleet.makeShip("basic"));
-            fleet.set("ships",ships);
+            fleet.update(fleet.data);
 
             res.json({success:true,data:fleet.data});
 

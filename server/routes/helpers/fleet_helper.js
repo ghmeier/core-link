@@ -94,12 +94,17 @@ module.exports = function FleetHelper(fb_root)
         var refId = fb_root.child("fleets").push().key();
 
         fb_root.child("planets").once("value",function(snapshot){
-            var count = Math.floor(Math.random() * snapshot.numChildren());
+            var count = Math.floor(Math.random() * snapshot.numChildren()) || 0;
 
-            var parentId = Object.keys(snapshot.val())[count];
+            var parentId = null;
+            if (snapshot.val()){
+                parentId = Object.keys(snapshot.val())[count];
+            }
+
             planetHelper.makePlanet(name+"'s home world",0,name,parentId,100,function(planet){
                 var planetId = planet.id;
-               fb_root.child("names").child(name).once("value",function(snap){
+
+                fb_root.child("names").child(name).once("value",function(snap){
 
                     if(snap.val() != null){
                         res.json({success:false,message:"Name "+name+" already exists."});

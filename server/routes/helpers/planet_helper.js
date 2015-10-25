@@ -63,6 +63,7 @@ module.exports = function PlanetHelper(fb_root)
 
         this.makePlanet(req.query.name,size,req.query.discoverer,req.query.parentId,distance,function(planet){
             res.json({success:true,message:"success",data:planet});
+            return;
         });
 
     }
@@ -117,7 +118,7 @@ module.exports = function PlanetHelper(fb_root)
                     var calc_cost = {};
                     for (id in up_data.cost){
                         var cost = Upgrade.calcMod(parseInt(up_data.cost[id]),cost_mult,to_up.level);
-
+                        console.log(id,cost);
                         if (cost > fleet.data.resources[id]){
                             res.json({success:false,message:"Not enough "+id+" to purchase."});
                             return;
@@ -259,8 +260,9 @@ module.exports = function PlanetHelper(fb_root)
     this.getConnections = function(refId,parentId,distance,callback){
         var connections = [];
 
-        if (!parentId){
-            return [];
+        if (!parentId || parentId == ""){
+            callback([]);
+            return;
         }
 
         connections.push({id:parentId,weight:distance});

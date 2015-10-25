@@ -121,7 +121,7 @@ module.exports = function PlanetHelper(fb_root)
 
                         if (helper.res_data[id]){
                             for (i=0;i<planet.data.resources.length;i++){
-                                if (planet.data.resources[i].type == id){
+                                if (planet.data.resources[i].type === id){
                                     planet.data.resources[i].mod += calc_reward;
                                     break;
                                 }
@@ -134,13 +134,13 @@ module.exports = function PlanetHelper(fb_root)
 
                     planet.data.upgrades[upgrade_id] = {level:to_up.level+1};
                     planet.update(planet.data,function(p_err){
-                        if (p_err){
+                        if (!p_err){
                             res.json({success:false,message:"unable to update",data:p_err});
                             return;
                         }
 
                         fleet.update(fleet.data,function(err){
-                            if (err){
+                            if (!err){
                                 res.json({success:false,message:"unable to update",data:err});
                                 return;
                             }

@@ -277,7 +277,7 @@ module.exports = function PlanetHelper(fb_root)
             if (!parent.data.connections){
                 parent.data.connections = [];
             }
-            var num = Math.floor(Math.random() * parent.data.connections.length);
+            var num = Math.floor(Math.random() * (parent.data.connections.length-1)) + 1;
 
             var used = {};
             for (i=0;i<num;i++){

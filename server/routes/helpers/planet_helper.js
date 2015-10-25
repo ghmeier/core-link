@@ -163,7 +163,7 @@ module.exports = function PlanetHelper(fb_root)
                                 res.json({success:false,message:"unable to update",data:err});
                                 return;
                             }
-
+                            console.log(planet.data);
                             res.json({success:true,data:planet.data});
                         });
                     });

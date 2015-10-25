@@ -47,11 +47,13 @@ module.exports = function FleetHelper(fb_root)
             return;
         }
 
-        var fleet = new Fleet(fb_root,id);
-        var ships = fleet.get("ships") || [];
-        ships.push(Fleet.makeShip("basic"));
-        fleet.set("ships",ships);
+        var fleet = new Fleet(fb_root,id,function(fleet){
+            var ships = fleet.get("ships") || [];
+            ships.push(Fleet.makeShip("basic"));
+            fleet.set("ships",ships);
 
-        res.json({success:true,data:fleet.data});
+            res.json({success:true,data:fleet.data});
+
+        });
     }
 }

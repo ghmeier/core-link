@@ -49,7 +49,7 @@ module.exports = function PlanetHelper(fb_root)
             return;
         }
 
-        this.makePlanet(req.query.name,size,res.query.discoverer,res.query.parentId,function(planet){
+        this.makePlanet(req.query.name,size,res.query.discoverer,res.query.parentId,distance,function(planet){
             res.json({success:true,message:"success",data:planet});
         });
 
@@ -163,10 +163,10 @@ module.exports = function PlanetHelper(fb_root)
 
     }
 
-    this.makePlanet = function(name,size,discoverer,parentId,callback){
+    this.makePlanet = function(name,size,discoverer,parentId,distance,callback){
         var refId = fb_root.child("planets").push().key();
         var resources = this.getResources(size);
-        var connections = this.getConnections(parentId,function(connections){
+        var connections = this.getConnections(parentId,distance,function(connections){
 
         if (!name){
             name = refId.substring(3,9);
@@ -181,7 +181,7 @@ module.exports = function PlanetHelper(fb_root)
                 "name":name,
                 "discoverer":discoverer
             };
-            console.log(planet);
+
             fb_root.child("planets").child(refId).set(planet);
 
             callback(planet);

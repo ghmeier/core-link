@@ -14,7 +14,9 @@ function Fleet(fb_root,id,callback){
     fleet.once("value",function(snap){
         self.data = snap.val();
 
-        self.data.harvester_cost = Fleet.harvesterost;
+        for (i=0;i<self.data.ships.length;i++){
+            self.data.ships[i].harvester_cost = Fleet.harvesterCost(self.data.ships.length);
+        }
         callback(self);
 
     });

@@ -97,7 +97,7 @@ module.exports = function FleetHelper(fb_root)
             var count = Math.floor(Math.random() * snapshot.numChildren());
 
             var parentId = Object.keys(snapshot.val())[count];
-            planetHelper.makePlanet(name+"'s home world",0,refId,parentId,function(planet){
+            planetHelper.makePlanet(name+"'s home world",0,refId,parentId,100,function(planet){
                 var planetId = planet.id;
                fb_root.child("names").child(name).once("value",function(snap){
 
@@ -423,6 +423,10 @@ module.exports = function FleetHelper(fb_root)
             var ship = fleet.data.ships[position];
             if (!ship.harvesters){
                 ship.harvesters = [];
+            }
+
+            if (ship.harvester_cost > fleet.data.resources.steel){
+
             }
 
             ship.harvesters.push(Fleet.makeHarvester());

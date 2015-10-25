@@ -38,8 +38,19 @@ module.exports = function PlanetHelper(fb_root)
     this.new_planet = function(req,res){
         var distance = Math.random() * 1000;
         console.log(distance,req.query.fuel);
-        if ((req.query.fuel && parseInt(req.query.fuel) < distance * 10) || Math.random() < 0.3){
+        var fuel = parseInt(req.query.fuel);
+        if ((req.query.fuel && fuel < distance * 10) || Math.random() < 0.3/(fuel/1000)){
             res.json({success:false,message:"Looks like you didn't find anything this time!"});
+            return;
+        }
+
+        if (!req.query.parentId){
+            res.json({success:false,message:"Parent Id is required."});
+            return;
+        }
+
+        if (!req.query.discoverer){
+            res.json({success:false,message:"Discoverer is required."});
             return;
         }
 

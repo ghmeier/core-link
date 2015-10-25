@@ -403,6 +403,27 @@ module.exports = function FleetHelper(fb_root)
         });
     }
 
+    this.level_harvester = function(req,res){
+        var id = req.params.id;
+        var ship_id = req.params.position;
+        var h_id = req.params.h_position;
+
+        var ship_id = parseInt(req.params.position);
+        var h_id = parseInt(req.params.h_position);
+
+        var fleet = new Fleet(fb_root,id,function(fleet){
+            var ship = fleet.data.ships[ship_id];
+            var harvester = ship.harvesters[h_id];
+
+            harvester.level++;
+            harvester.speed += harvester.level *harvester.speed;
+            fleet.set("ships",fleet.data.ships);
+
+            res.json({success:true,data:fleet.data});
+        });
+
+    }
+
     this.add_harvester = function(req,res){
         var id = req.params.id;
 
@@ -431,10 +452,13 @@ module.exports = function FleetHelper(fb_root)
             }
 
             if (ship.harvester_cost > fleet.data.resources.steel){
-
+                res.json({success:false,message:"Not enough steel."});
+                return;
             }
 
+            fleet.data.resources["steel"] -= ship.harvester_cost;
             ship.harvesters.push(Fleet.makeHarvester());
+            ship.harvester_cost = Fleet.harvesterCost(ship.harvesters.length);
             fleet.set("ships",fleet.data.ships);
 
             res.json({success:true,data:fleet.data});

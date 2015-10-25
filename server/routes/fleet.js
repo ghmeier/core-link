@@ -29,6 +29,9 @@ module.exports = function(app, FleetHelper, fb_root){
     });
     app.get(ship_path+":position/add_harvester",function(req,res){
         fleetHelper.add_harvester(req,res);
+    });
+    app.get(ship_path+":position/harvesters/:h_position/level",function(req,res){
+        fleetHelper.level_harvester(req,res);
     })
     app.get(path+":id",function(req,res){
         fleetHelper.get_fleet(req,res);

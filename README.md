@@ -15,6 +15,24 @@ Add value to resource - GET /fleet/:id/add_resource?type=<type>&amount=<amount>
 Add a ship - GET /fleet/:id/add_ship?type=<type>
     - returns the fleet
 
+Update fleet - GET /fleet/:id/update
+    - returns the fleet
+
+Upgrade fleet - GET /fleet/:id/upgrade/:upgrade_id
+    - returns the fleet
+
+Get a ship - GET /fleet/:id/ships/:position
+    - returns the ship (position is the numeric position of the ship in the ships array)
+
+Get all ships - GET /fleet/:id/ships/
+    - returns array of ships
+
+Upgrade a ship - GET /fleet/:id/ships/:position/upgrade/:id
+    - returns the fleet
+
+Add a harvester to a ship - GET /fleet/:id/ships/:position/add_harvester
+    - returns the fleet
+
 Create a planet - GET /planet/new
     - optional params:
         > boolean connect - determines if the planet can connect to others

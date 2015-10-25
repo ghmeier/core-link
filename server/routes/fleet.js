@@ -18,14 +18,14 @@ module.exports = function(app, FleetHelper, fb_root){
     app.get(path+":id/upgrade",function(req,res){
         fleetHelper.upgrade(req,res);
     });
-    app.get(ship_path+":position/upgrade",function(req,res){
-        fleetHelper.upgrade_ship(req,res);
+    app.get(ship_path,function(req,res){
+        fleetHelper.get_ships(req,res);
     });
     app.get(ship_path+":position",function(req,res){
         fleetHelper.get_ship(req,res);
     });
-    app.get(ship_path,function(req,res){
-        fleetHelper.get_ships(req,res);
+    app.get(ship_path+":position/upgrade",function(req,res){
+        fleetHelper.upgrade_ship(req,res);
     });
     app.get(ship_path+":position/add_harvester",function(req,res){
         fleetHelper.add_harvester(req,res);

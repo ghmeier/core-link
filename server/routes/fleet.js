@@ -8,4 +8,10 @@ module.exports = function(app, FleetHelper, fb_root){
     app.get(path+":id/add",function(req,res){
         fleetHelper.add_ship(req,res);
     });
+    app.get(path+":id",function(req,res){
+        fleetHelper.get_fleet(req,res);
+    });
+    app.get(path,function(req,res){
+        fleetHelper.get_fleet_id(req,res);
+    });
 }

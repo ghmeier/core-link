@@ -5,10 +5,44 @@ module.exports = function FleetHelper(fb_root)
 	var helper = this;
     this.fb_root = fb_root;
 
-    this.new_fleet = function(req,res){
+    this.get_fleet_id = function(req,res){
         var name = req.query.name;
 
-        console.log(/[0-9a-zA-Z]/.test(name));
+        if (name == undefined || name == "" || !/[0-9a-zA-Z]/.test(name)){
+            res.json({success:false,message:"Invalid fleet name."});
+            return;
+        }
+
+        fb_root.child("names").child(name).once("value",function(snap){
+            if (!snap || !snap.val()){
+                res.json({success:false,message:"Fleet named "+name+" does not exist."})
+                return;
+            }
+
+            res.json({success:true,data:{id:snap.val()}});
+        });
+
+    }
+
+    this.get_fleet = function(req,res){
+        var id = req.params.id;
+
+        if (id == undefined || id == ""){
+            res.json({success:false,message:"Must provide a valid id."});
+        }
+
+        fb_root.child("fleets").child(id).once("value",function(snap){
+            if (!snap || !snap.val()){
+                res.json({success:false,message:"Fleet with id "+id+" does not exist."});
+                return;
+            }
+
+            res.json({success:true,data:snap.val()});
+        });
+    }
+
+    this.new_fleet = function(req,res){
+        var name = req.query.name;
 
         if (name == undefined || name == "" || !/[0-9a-zA-Z]/.test(name)){
             res.json({success:false,message:"Creating a fleet requires a name that is alphanumeric and _."});

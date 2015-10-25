@@ -2,6 +2,8 @@
 
 A Procedural Clicker Game at MINNEHACKS
 
+Get fleet id by name - GET /fleet?name=<fleet_name>
+    - returns the fleet id {data:{id:<id>}}
 
 Create a fleet and user - GET /fleet/new?name=<fleet_name>
     - returns the fleet

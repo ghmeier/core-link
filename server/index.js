@@ -8,11 +8,15 @@ var expressValidator = require("express-validator");
 var session = require("express-session");
 var passport = require("passport");
 var favicon = require("serve-favicon");
+var Firebase = require("firebase");
+
 var cors = require("cors");
 var corsOptions = {
 	origin : "*"
 };
 
+
+var fb_root = new Firebase("https://core-link.firebaseio.com");
 var app = express();
 
 app.engine("html",swig.renderFile);

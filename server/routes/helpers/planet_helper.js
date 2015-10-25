@@ -46,13 +46,28 @@ module.exports = function PlanetHelper(fb_root)
 
         };
 
-        var fb = {};
-
-        fb[refId] = planet;
-        fb_root.child("planets").set(fb);
+        fb_root.child("planets").child(refId).set(planet);
 
         res.json({success:true,message:"success",data:planet});
 
+    }
+
+    this.get_planet = function(req,res){
+        var id = req.params.id;
+
+        if (id == undefined || id == ""){
+            res.json({success:true,message:"Must provide planet id."});
+            return;
+        }
+
+        fb_root.child("planets").child(id).once("value",function(snap){
+            if (!snap || !snap.val()){
+                res.json({success:false,message:"Planet does not exist."});
+                return;
+            }
+
+            res.json({success:true,data:snap.val()});
+        });
     }
 
     this.getResources = function(size){

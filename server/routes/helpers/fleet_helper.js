@@ -49,9 +49,9 @@ module.exports = function FleetHelper(fb_root)
             return;
         }
 
-        fb_root.child("names").once("value",function(snap){
+        fb_root.child("names").child(name).once("value",function(snap){
 
-            if(snap.val()){
+            if(snap.val() != null){
                 res.json({success:false,message:"Name "+name+" already exists."});
                 return;
             }

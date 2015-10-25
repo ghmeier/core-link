@@ -21,6 +21,7 @@ var app = express();
 
 //Helpers
 var FleetHelper = require("./routes/helpers/fleet_helper.js");
+var PlanetHelper = require("./routes/helpers/planet_helper.js");
 
 app.engine("html",swig.renderFile);
 app.set("views",path.join(__dirname,"views"));
@@ -46,6 +47,7 @@ app.use(cors(corsOptions));
 var routes = require("./routes.js");
 
 require('./routes/fleet.js')(app, FleetHelper,fb_root);
+require('./routes/planet.js')(app, PlanetHelper,fb_root);
 routes(app,passport);
 
 module.exports = app;

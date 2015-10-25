@@ -5,4 +5,7 @@ module.exports = function(app, PlanetHelper, fb_root){
     app.get(path+"new",function(req,res){
         planetHelper.new_planet(req,res);
     });
+    app.get(path+":id",function(req,res){
+        planetHelper.get_planet(req,res);
+    });
 }

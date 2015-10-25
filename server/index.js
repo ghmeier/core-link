@@ -41,7 +41,7 @@ app.use(cors(corsOptions));
 
 var routes = require("./routes.js");
 
-require('./routes/fleet')(app, FleetHelper);
+require('./routes/fleet.js')(app, FleetHelper);
 routes(app,passport);
 
 module.exports = app;

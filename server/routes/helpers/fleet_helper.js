@@ -6,37 +6,48 @@ module.exports = function FleetHelper(fb_root)
     this.fb_root = fb_root;
 
     this.new_fleet = function(req,res){
-        var refId = fb_root.child("fleets").push().key();
-
         var name = req.query.name;
 
-        if (name == undefined || name == ""){
-            res.json({success:false,message:"Creating a fleet requires a name."});
+        console.log(/[0-9a-zA-Z]/.test(name));
+
+        if (name == undefined || name == "" || !/[0-9a-zA-Z]/.test(name)){
+            res.json({success:false,message:"Creating a fleet requires a name that is alphanumeric and _."});
             return;
         }
 
-        var fleet = {
-            "id" : refId,
-            "fuel" : 0,
-            "ships": [Fleet.makeShip("basic")],
-            "colonies": [],
-            "resources":{
-                "copper":0,
-                "steel":0,
-                "aluminum":0,
-                "oil":0,
-                "coal":0,
-                "uranium":0,
-                "water":0,
-                "protein":0
-            },
-            dna:0,
-            name:name
-        };
+        fb_root.child("names").once("value",function(snap){
 
-        fb_root.child("fleets").child(refId).set(fleet);
+            if(snap.val()){
+                res.json({success:false,message:"Name "+name+" already exists."});
+                return;
+            }
 
-        res.json({success:true,message:"success",data:fleet});
+            var refId = fb_root.child("fleets").push().key();
+
+            var fleet = {
+                "id" : refId,
+                "fuel" : 0,
+                "ships": [Fleet.makeShip("basic")],
+                "colonies": [],
+                "resources":{
+                    "copper":0,
+                    "steel":0,
+                    "aluminum":0,
+                    "oil":0,
+                    "coal":0,
+                    "uranium":0,
+                    "water":0,
+                    "protein":0
+                },
+                dna:0,
+                name:name
+            };
+
+            fb_root.child("names").child(name).set(refId);
+            fb_root.child("fleets").child(refId).set(fleet);
+
+            res.json({success:true,message:"success",data:fleet});
+        });
     }
 
     this.add_ship = function(req,res){

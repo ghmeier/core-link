@@ -36,6 +36,12 @@ module.exports = function PlanetHelper(fb_root)
     this.fb_root = fb_root;
 
     this.new_planet = function(req,res){
+        var distance = Math.random() * 1000;
+        if ((req.query.fuel && parseInt(req.query.fuel) < distance * 10) || Math.random() < 0.3){
+            res.json({success:false,message:"Looks like you didn't find anything this time!"});
+            return;
+        }
+
         var size = this.getSize(parseInt(req.query.size_mod));
 
         if (!size){
@@ -43,7 +49,7 @@ module.exports = function PlanetHelper(fb_root)
             return;
         }
 
-        this.makePlanet(size,res.query.discoverer,res.query.parentId,function(planet){
+        this.makePlanet(req.query.name,size,res.query.discoverer,res.query.parentId,function(planet){
             res.json({success:true,message:"success",data:planet});
         });
 
@@ -162,6 +168,10 @@ module.exports = function PlanetHelper(fb_root)
         var resources = this.getResources(size);
         var connections = this.getConnections(parentId,function(connections){
 
+        if (!name){
+            name = refId.substring(3,9);
+        }
+
             var planet = {
                 "id" : refId,
                 "connections": connections,
@@ -234,9 +244,8 @@ module.exports = function PlanetHelper(fb_root)
         return resNew;
     }
 
-    this.getConnections = function(parentId,callback){
+    this.getConnections = function(parentId,distance,callback){
         var connections = [];
-        var distance = Math.random() * 1000;
 
         if (!parentId){
             return [];

@@ -1,1 +1,1 @@
-curl -X POST http://localhost:3000/upgrades/fleet -d '{"name":"Research","cost_multiplier":10,"cost":{"copper":1000,"aluminum":100,"uranium":10},"desc":"Increase your tech level!","result":{"tech":1},"result_multiplier":1}'
+curl -X POST http://localhost:3000/upgrades/fleet -d '{"name":"Research","cost_multiplier":"10","cost":{"copper":"1000","aluminum":"100","uranium":"10"},"desc":"Increase your tech level!","result":{"tech_level":"1"},"result_multiplier":"1"}'

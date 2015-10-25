@@ -24,6 +24,15 @@ Create a planet - GET /planet/new
 Get a planet - GET /planet/:id
     -returns the planet
 
-Get all upgrades - GET /upgrades
-    - returns full json of all upgrades
+Get fleet upgrades - GET /upgrades/fleet
+    - returns full json of fleet upgrades
 
+Get planet upgrades - GET /upgrades/planet
+    -json of planet upgrades
+
+Get ship upgrades - GET /upgrades/ship
+    -json of ship upgrades
+
+New ship/planet/fleet upgrade - POST /upgrades/<ship/planet/fleet>
+    - data:{"name":"Reaserch","cost_multiplier":0,"cost":{"copper":1000,"aluminum":100,"uranium":10},"desc":"Increase your tech level!","result":{"tech":1},"result_multiplier":1}
+    - returns json of upgrade with id.

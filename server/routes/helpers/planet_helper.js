@@ -47,7 +47,7 @@ module.exports = function PlanetHelper(fb_root)
 
     }
 
-    this.makePlanet = function(size,connect,callback){
+    this.makePlanet = function(name,size,connect,callback){
         var refId = fb_root.child("planets").push().key();
         var resources = this.getResources(size);
         var connections = [];
@@ -61,7 +61,7 @@ module.exports = function PlanetHelper(fb_root)
             "colonies": [],
             "size":size,
             "resources":resources,
-
+            "name":name
         };
 
         fb_root.child("planets").child(refId).set(planet);

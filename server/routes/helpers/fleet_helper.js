@@ -79,7 +79,7 @@ module.exports = function FleetHelper(fb_root)
         }
 
         var planetHelper = new PlanetHelper(fb_root);
-        planetHelper.makePlanet(0,false,function(planet){
+        planetHelper.makePlanet(name+"'s home world",0,false,function(planet){
             var planetId = planet.id;
            fb_root.child("names").child(name).once("value",function(snap){
 

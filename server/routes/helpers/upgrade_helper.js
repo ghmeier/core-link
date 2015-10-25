@@ -14,7 +14,8 @@ module.exports = function UpgradeHelper(fb_root)
     this.new_fleet = function(req,res){
         var refId = fb_root.child("fleet_upgrades").push().key();
 
-        var data = req.body;
+        console.log(req.body);
+        var data = JSON.parse(req.body);
 
         fb_root.child("fleet_upgrades").child(refId).set(data);
 

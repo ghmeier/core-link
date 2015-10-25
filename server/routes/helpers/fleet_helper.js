@@ -175,9 +175,11 @@ module.exports = function FleetHelper(fb_root)
             fleet.data.resources['aluminium'] -=alu_cost;
             fleet.data.resources['oil'] -= oil_cost;
             ships.push(Fleet.makeShip("basic"));
-            fleet.update(fleet.data);
+            fleet.update(fleet.data, function(data){
 
             res.json({success:true,data:fleet.data});
+
+            });
 
         });
     }

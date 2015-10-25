@@ -1,1 +1,1 @@
-curl -X POST http://localhost:3000/upgrades/fleet -d '{"name":"Research","cost_multiplier":"10","cost":{"copper":"1000","aluminum":"100","uranium":"10"},"desc":"Increase your tech level!","result":{"tech_level":"1"},"result_multiplier":"1"}'
+curl -X POST http://localhost:3000/upgrades/planet -d '{"name":"Prospect For Steel","cost_multiplier":"14","cost":{"food":"1000","steel":"100","protein":"110"},"desc":"Increase abundance of steel on this planet!","result":{"resources-steel":".01"},"result_multiplier":"1.1"}'

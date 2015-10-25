@@ -12,14 +12,19 @@ module.exports = function UpgradeHelper(fb_root)
     }
 
     this.new_fleet = function(req,res){
-        var refId = fb_root.child("fleet_upgrades").push().key();
+        this.new_upgrade("fleet",req,function(data){
+            res.json({success:true,data:data});
+        });
+    }
 
-        console.log(req.body);
-        var data = JSON.parse(req.body);
+    this.new_upgrade = function(type,req,callback){
+        var refId = fb_root.child(type+"_upgrades").push().key();
 
-        fb_root.child("fleet_upgrades").child(refId).set(data);
+        var data = JSON.parse(Object.keys(req.body));
+        data.id = refId;
+        fb_root.child(type+"_upgrades").child(refId).set(data);
 
-        res.json({success:true,data:data});
+        callback(data);
     }
 
     this.get_fleet_id = function(req,res){
@@ -41,13 +46,9 @@ module.exports = function UpgradeHelper(fb_root)
     }
 
     this.new_ship = function(req,res){
-        var refId = fb_root.child("ship_upgrades").push().key();
-
-        var data = req.body;
-
-        fb_root.child("ship_upgrades").child(refId).set(data);
-
-        res.json({success:true,data:data});
+        this.new_upgrade("ship",req,function(data){
+            res.json({success:true,data:data});
+        });
     }
 
     this.get_ship_id = function(req,res){
@@ -81,12 +82,8 @@ module.exports = function UpgradeHelper(fb_root)
     }
 
     this.new_planet = function(req,res){
-        var refId = fb_root.child("planet_upgrades").push().key();
-
-        var data = req.body;
-
-        fb_root.child("planet_upgrades").child(refId).set(data);
-
-        res.json({success:true,data:data});
+        this.new_upgrade("planet",req,function(data){
+            res.json({success:true,data:data});
+        });
     }
 }

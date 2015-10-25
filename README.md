@@ -2,10 +2,10 @@
 
 A Procedural Clicker Game at MINNEHACKS
 
-Get fleet id by name - GET /fleet?name=<fleet_name>
-    - returns the fleet id {data:{id:<id>}}
+Get fleet by name - GET /fleet?name=<fleet_name>
+    - returns the fleet data
 
-Get fleet
+Get fleet - GET /fleet/:id
 
 Create a fleet and user - GET /fleet/new?name=<fleet_name>
     - returns the fleet
@@ -20,3 +20,10 @@ Create a planet - GET /planet/new
         > boolean connect - determines if the planet can connect to others
         > int size_mod - increase chances of bigger planets
     - returns the planet
+
+Get a planet - GET /planet/:id
+    -returns the planet
+
+Get all upgrades - GET /upgrades
+    - returns full json of all upgrades
+

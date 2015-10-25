@@ -91,7 +91,9 @@ module.exports = function FleetHelper(fb_root)
         }
 
         var planetHelper = new PlanetHelper(fb_root);
-        planetHelper.makePlanet(name+"'s home world",0,false,function(planet){
+        var refId = fb_root.child("fleets").push().key();
+
+        planetHelper.makePlanet(name+"'s home world",0,false,refId,function(planet){
             var planetId = planet.id;
            fb_root.child("names").child(name).once("value",function(snap){
 
@@ -99,8 +101,6 @@ module.exports = function FleetHelper(fb_root)
                     res.json({success:false,message:"Name "+name+" already exists."});
                     return;
                 }
-
-                var refId = fb_root.child("fleets").push().key();
 
                 var fleet = {
                     "id" : refId,
@@ -241,15 +241,14 @@ module.exports = function FleetHelper(fb_root)
 
                 var result_multiplier = up_data.result_multiplier;
                 for (id in up_data.result){
-                    var parsed_id = id.split("-");
 
                     var calc_reward = Upgrade.calcMod(parseInt(up_data.result[id]),
                             parseInt(result_multiplier),to_up.level);
 
-                    if (parsed_id[0] == "resources" && parsed_id.length > 1){
-                        fleet.data.resources[parsed_id[1]] += calc_reward;
+                    if (planetHelper.res_data[id]){
+                        fleet.data.resources[id] += calc_reward;
                     }else{
-                        fleet.data[parsed_id[0]] += calc_reward;
+                        fleet.data[id] += calc_reward;
                     }
 
                 }

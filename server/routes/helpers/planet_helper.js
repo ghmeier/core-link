@@ -1,4 +1,5 @@
 var Planet = require("../../models/Planet.js");
+var Upgrade = require("../../models/Upgrade.js");
 
 module.exports = function PlanetHelper(fb_root)
 {
@@ -41,18 +42,125 @@ module.exports = function PlanetHelper(fb_root)
             return;
         }
 
-        this.makePlanet(size,res.query.connect,function(planet){
+        this.makePlanet(size,res.query.connect,res.query.discoverer,res.query.parentId,function(planet){
             res.json({success:true,message:"success",data:planet});
         });
 
     }
 
-    this.makePlanet = function(name,size,connect,callback){
+    this.upgrade = function(req,res){
+        var id = req.params.id;
+        var upgrade_id = req.params.upgrade_id;
+        var fleet_id = req.query.fleet_id;
+
+        if (!fleet_id){
+            res.json({success:false,message:"Must provide a fleet id."});
+            return;
+        }
+
+        if (!id){
+            res.json({success:false,message:"Must provide a planet id."});
+            return;
+        }
+
+        if (!upgrade_id){
+            res.json({success:false,message:"Must provide an upgrade id."});
+            return;
+        }
+
+        var upgrade = new Upgrade(fb_root,upgrade_id,"planet",function(upgrade){
+            if (!upgrade.data){
+                res.json({success:false,message:"Upgrade does not exist."});
+                return;
+            }
+
+            var upgrade_id = upgrade.data.id;
+            var up_data = upgrade.data;
+            var planet = new Planet(fb_root,id,function(planet){
+                if (!planet.data){
+                    res.json({success:false,message:"Planet with id "+id+" does not exist."});
+                    return;
+                }
+
+                if (!planet.data.upgrades){
+                    planet.data.upgrades = {};
+                }
+
+                var fleet = new Fleet(fb_root,fleet_id,function(fleet){
+                    if (!fleet.data){
+                        res.json({success:false,message:"Fleet with id "+fleet_id+" does not exist."});
+                        return;
+                    }
+                    var to_up = planet.data.upgrades[upgrade_id] || {level:0};
+
+                    var cost_mult = parseInt(up_data.cost_multiplier);
+                    var calc_cost = {};
+                    for (id in up_data.cost){
+                        var cost = Upgrade.calcMod(parseInt(up_data.cost[id]),cost_mult,to_up.level);
+
+                        if (cost > fleet.data.resources[id]){
+                            res.json({success:true,message:"Not enough "+id+" to purchase."});
+                            return;
+                        }
+
+                        calc_cost[id] = cost;
+
+                    }
+
+                    for (id in calc_cost){
+                        fleet.data.resources[id] -= calc_cost[id];
+                    }
+
+                    var result_multiplier = up_data.result_multiplier;
+                    for (id in up_data.result){
+
+                        var calc_reward = Upgrade.calcMod(parseInt(up_data.result[id]),
+                                parseInt(result_multiplier),to_up.level);
+
+                        if (helper.res_data[id]){
+                            for (i=0;i<planet.data.resources.length;i++){
+                                if (planet.data.resources[i].type == id){
+                                    planet.data.resources[i].mod += calc_reward;
+                                    break;
+                                }
+                            }
+                        }else{
+                            planet.data[id] += calc_reward;
+                        }
+
+                    }
+
+                    planet.data.upgrades[upgrade_id] = {level:to_up.level+1};
+                    planet.update(planet.data,function(p_err){
+                        if (p_err){
+                            res.json({success:false,message:"unable to update",data:p_err});
+                            return;
+                        }
+
+                        fleet.update(fleet.data,function(err){
+                            if (err){
+                                res.json({success:false,message:"unable to update",data:err});
+                                return;
+                            }
+
+                            res.json({success:true,data:planet.data});
+                        });
+                    });
+
+                });
+
+            });
+
+        });
+
+    }
+
+    this.makePlanet = function(name,size,connect,discoverer,parentId,callback){
         var refId = fb_root.child("planets").push().key();
         var resources = this.getResources(size);
         var connections = [];
         if (connect){
-            connections = this.getConnections();
+            connections = this.getConnections(parentId);
         }
 
         var planet = {
@@ -61,7 +169,8 @@ module.exports = function PlanetHelper(fb_root)
             "colonies": [],
             "size":size,
             "resources":resources,
-            "name":name
+            "name":name,
+            "discoverer":discoverer
         };
 
         fb_root.child("planets").child(refId).set(planet);
@@ -124,8 +233,10 @@ module.exports = function PlanetHelper(fb_root)
         return resNew;
     }
 
-    this.getConnections = function(){
+    this.getConnections = function(parentId){
+        var connections = [parentId];
 
+        return connections;
     }
 
 }

@@ -5,7 +5,7 @@ function Planet(fb_root,id){
     this.data = {};
     this.fb_root = fb_root;
 
-    var planet = getFirebaseLocation(this.fb_root,this.id);
+    var planet = this.getFirebaseLocation(this.fb_root,this.id);
 
     planet.on("value",function(snap){
         this.data = snap.val();
@@ -25,3 +25,5 @@ Planet.prototype.set = function(key,val){
 Planet.prototype.get = function(key){
     return this.data[key];
 }
+
+module.exports = Planet;

@@ -1,5 +1,11 @@
-module.exports = function(app, FleetHelper){
-	//Class with methods to help take the load off the endpoints 
-	var fleetHelper = new FleetHelper();
-
+module.exports = function(app, FleetHelper, fb_root){
+	//Class with methods to help take the load off the endpoints
+	var fleetHelper = new FleetHelper(fb_root);
+    var path = "/fleet/";
+    app.get(path+"new",function(req,res){
+        fleetHelper.new_fleet(req,res);
+    });
+    app.get(path+":id/add",function(req,res){
+        fleetHelper.add_ship(req,res);
+    });
 }

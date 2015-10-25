@@ -10,7 +10,7 @@ module.exports = function(app,passport){
 	});
 
     app.get("*",function(req,res){
-        res.sendFile(path.resolve(__dirname+"/../public/index.html"));
+        res.json({success:true,message:"Unsupported Location."});
     });
 
 };

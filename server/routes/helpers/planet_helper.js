@@ -37,7 +37,7 @@ module.exports = function PlanetHelper(fb_root)
 
     this.new_planet = function(req,res){
         var distance = Math.random() * 1000;
-        console.log(distance,req.query.fuel);
+
         var fuel = parseInt(req.query.fuel);
         if ((req.query.fuel && fuel < distance * 10) || Math.random() < 0.3/(fuel/1000)){
             res.json({success:false,message:"Looks like you didn't find anything this time!"});
@@ -178,7 +178,7 @@ module.exports = function PlanetHelper(fb_root)
     this.makePlanet = function(name,size,discoverer,parentId,distance,callback){
         var refId = fb_root.child("planets").push().key();
         var resources = this.getResources(size);
-        var connections = this.getConnections(parentId,distance,function(connections){
+        var connections = this.getConnections(refId,parentId,distance,function(connections){
 
         if (!name){
             name = refId.substring(3,9);
@@ -256,7 +256,7 @@ module.exports = function PlanetHelper(fb_root)
         return resNew;
     }
 
-    this.getConnections = function(parentId,distance,callback){
+    this.getConnections = function(refId,parentId,distance,callback){
         var connections = [];
 
         if (!parentId){
@@ -264,7 +264,6 @@ module.exports = function PlanetHelper(fb_root)
         }
 
         connections.push({id:parentId,weight:distance});
-        console.log(connections);
 
         var parent = new Planet(fb_root,parentId,function(parent){
             if (!parent.data){
@@ -280,13 +279,22 @@ module.exports = function PlanetHelper(fb_root)
             for (i=0;i<num;i++){
                 var prospect = parent.data.connections[Math.floor(Math.random() * parent.data.connections.length)];
                 if (!used[prospect.id]){
-                    used[prospect.id] = true;
+                    used[prospect.id] = distance+prospect.weight;
                     connections.push({id:prospect.id,weight:distance+prospect.weight});
                 }
             }
 
-            parent.data.connections.push({id:this.id,weight:distance});
-            console.log(connections);
+
+            parent.data.connections.push({id:refId,weight:distance});
+            parent.set("connections",parent.data.connections);
+
+            for (id in used){
+                new Planet(fb_root,id,function(conn){
+                    conn.data.connections.push({id:refId,weight:used[id]});
+                    conn.set("connections",conn.data.connections);
+                })
+            }
+
             callback(connections);
         });
     }

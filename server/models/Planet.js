@@ -26,7 +26,7 @@ Planet.prototype.getFirebaseLocation = function(){
 Planet.prototype.set = function(key,val){
     this.data[key] = val;
 
-    this.getFirebaseLocation().update(this.data);
+    this.getFirebaseLocation().child(key).set(val);
 }
 
 Planet.prototype.update = function(data,callback){

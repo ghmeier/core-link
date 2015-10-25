@@ -94,7 +94,8 @@ module.exports = function FleetHelper(fb_root)
         var refId = fb_root.child("fleets").push().key();
 
         fb_root.child("planets").once("value",function(snapshot){
-            var count = Math.floor(Math.random() * snapshot.numChildren()) || 0;
+
+            var count = Math.floor(Math.random() * snapshot.numChildren());
 
             var parentId = null;
             if (snapshot.val()){

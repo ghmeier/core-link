@@ -36,7 +36,7 @@ module.exports = function PlanetHelper(fb_root)
     this.fb_root = fb_root;
 
     this.new_planet = function(req,res){
-        var distance = Math.random() * 1000;
+        var distance = Math.random() * 1500;
 
         var fuel = parseInt(req.query.fuel);
         if ((req.query.fuel && fuel < distance * 10) || Math.random() < 0.3/(fuel/1000)){
@@ -118,7 +118,6 @@ module.exports = function PlanetHelper(fb_root)
                     var calc_cost = {};
                     for (id in up_data.cost){
                         var cost = Upgrade.calcMod(parseInt(up_data.cost[id]),cost_mult,to_up.level);
-                        console.log(id,cost);
                         if (cost > fleet.data.resources[id]){
                             res.json({success:false,message:"Not enough "+id+" to purchase."});
                             return;
@@ -134,13 +133,16 @@ module.exports = function PlanetHelper(fb_root)
 
                     var result_multiplier = up_data.result_multiplier;
                     for (id in up_data.result){
-
-                        var calc_reward = Upgrade.calcMod(parseInt(up_data.result[id]),
-                                parseInt(result_multiplier),to_up.level);
+                        console.log(id,up_data.result,up_data.result_multiplier,to_up.level);
+                        var calc_reward = Upgrade.calcMod(up_data.result[id],
+                                result_multiplier,to_up.level);
 
                         if (helper.res_data[id]){
+
                             for (i=0;i<planet.data.resources.length;i++){
+
                                 if (planet.data.resources[i].type === id){
+                                    console.log(calc_reward);
                                     planet.data.resources[i].mod += calc_reward;
                                     break;
                                 }

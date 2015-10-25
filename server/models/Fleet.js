@@ -13,6 +13,9 @@ function Fleet(fb_root,id,callback){
 
     fleet.once("value",function(snap){
         self.data = snap.val();
+        if (!self.data.ships){
+            self.data.ships = [Fleet.makeShip("basic")];
+        }
 
         for (i=0;i<self.data.ships.length;i++){
             if (!self.data.ships[i].harvesters){

@@ -15,7 +15,7 @@ module.exports = function(app, FleetHelper, fb_root){
     app.get(path+":id/add_resource",function(req,res){
         fleetHelper.add_resource(req,res);
     });
-    app.get(path+":id/upgrade",function(req,res){
+    app.get(path+":id/upgrade/:upgrade_id",function(req,res){
         fleetHelper.upgrade(req,res);
     });
     app.get(ship_path,function(req,res){

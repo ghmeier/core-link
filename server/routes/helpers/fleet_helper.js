@@ -109,6 +109,7 @@ module.exports = function FleetHelper(fb_root)
                     "ships": [Fleet.makeShip("basic")],
                     "search_bonus":0,
                     "tech_level":0,
+                    "ship_max":1,
                     "colonies": [],
                     "resources":{
                         "copper":0,
@@ -188,13 +189,19 @@ module.exports = function FleetHelper(fb_root)
 
     this.upgrade = function(req,res){
         var id = req.params.id;
+        var upgrade_id = req.params.upgrade_id;
 
         if (!id){
             res.json({success:false,message:"Must provide a fleet id."});
             return;
         }
 
-        var upgrade = new Upgrade(fb_root,id,"fleet",function(upgrade){
+        if (!upgrade_id){
+            res.json({success:false,message:"Must provide an upgrade id."});
+            return;
+        }
+
+        var upgrade = new Upgrade(fb_root,upgrade_id,"fleet",function(upgrade){
             if (!upgrade.data){
                 res.json({success:false,message:"Upgrade does not exist."});
                 return;
@@ -217,7 +224,7 @@ module.exports = function FleetHelper(fb_root)
                 var cost_mult = parseInt(up_data.cost_multiplier);
                 var calc_cost = {};
                 for (id in up_data.cost){
-                    var cost = calcMod(parseInt(up_data.cost[id]),cost_mult,to_up.level);
+                    var cost = Upgrade.calcMod(parseInt(up_data.cost[id]),cost_mult,to_up.level);
 
                     if (cost > fleet.data.resources[id]){
                         res.json({success:true,message:"Not enough "+id+" to purchase."});
@@ -229,13 +236,14 @@ module.exports = function FleetHelper(fb_root)
                 }
 
                 for (id in calc_cost){
-                    fleet.data.resources[id] - calc_cost[id];
+                    fleet.data.resources[id] -= calc_cost[id];
                 }
 
+                var result_multiplier = up_data.result_multiplier;
                 for (id in up_data.result){
                     var parsed_id = id.split("-");
 
-                    var calc_reward = calcMod(parseInt(up_data.result[id]),
+                    var calc_reward = Upgrade.calcMod(parseInt(up_data.result[id]),
                             parseInt(result_multiplier),to_up.level);
 
                     if (parsed_id[0] == "resources" && parsed_id.length > 1){
@@ -247,20 +255,19 @@ module.exports = function FleetHelper(fb_root)
                 }
 
                 fleet.data.upgrades[upgrade_id] = {level:to_up.level+1};
-                fleet.update(fleet.data);
-                res.json({success:true,data:fleet.data});
+                fleet.update(fleet.data,function(err){
+                    if (err){
+                        res.json({success:false,message:"unable to update",data:err});
+                        return;
+                    }
+
+                    res.json({success:true,data:data});
+                });
+
             });
 
         });
 
-    }
-
-    this.calcMod = function(val,modifier,iters){
-        if (iters == 0){
-            return val;
-        }
-
-        return calcMod(val,modifier,iters-1)*modifier;
     }
 
     this.upgrade_ship = function(req,res){

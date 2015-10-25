@@ -1,1 +1,1 @@
-curl -X POST http://localhost:3000/upgrades/planet -d '{"name":"Prospect For Steel","cost_multiplier":"14","cost":{"food":"1000","steel":"100","protein":"110"},"desc":"Increase abundance of steel on this planet!","result":{"resources-steel":".01"},"result_multiplier":"1.1"}'
+curl -X POST http://localhost:3000/upgrades/ship -d '{"cost":{"food":1000,"protein":110,"steel":100},"cost_multiplier":8,"desc":"Increase this ships max population!","name":"More Beds","result":{"population_max":1},"result_multiplier":1.5}' -H "Content-Type: application/json"

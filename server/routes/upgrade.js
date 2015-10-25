@@ -7,6 +7,10 @@ module.exports = function(app, UpgradeHelper, fb_root){
         upgradeHelper.get_fleet_id(req,res);
     });
 
+    app.get(path+"fleet/find/:type",function(req,res){
+        upgradeHelper.find_fleet(req,res);
+    });
+
     app.get(path+"fleet",function(req,res){
         upgradeHelper.get_fleet(req,res);
     });
@@ -19,6 +23,10 @@ module.exports = function(app, UpgradeHelper, fb_root){
         upgradeHelper.get_ship_id(req,res);
     });
 
+    app.get(path+"ship/find/:type",function(req,res){
+        upgradeHelper.find_ship(req,res);
+    });
+
     app.get(path+"ship",function(req,res){
         upgradeHelper.get_ship(req,res);
     });
@@ -28,7 +36,11 @@ module.exports = function(app, UpgradeHelper, fb_root){
     });
 
     app.get(path+"planet/:id",function(req,res){
-        upgradeHelper.get_ship_id(req,res);
+        upgradeHelper.get_planet_id(req,res);
+    });
+
+    app.get(path+"planet/find/:type",function(req,res){
+        upgradeHelper.find_planet(req,res);
     });
 
     app.get(path+"planet",function(req,res){

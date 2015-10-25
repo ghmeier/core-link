@@ -9,7 +9,6 @@ function Fleet(fb_root,id,callback){
     var fleet = this.getFirebaseLocation();
     fleet.on("value",function(snap){
         self.data = snap.val();
-        console.log(snap.val());
     });
 
     fleet.once("value",function(snap){

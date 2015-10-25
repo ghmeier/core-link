@@ -223,6 +223,9 @@ module.exports = function FleetHelper(fb_root)
             }
 
             var ship = fleet.data.ships[position];
+            if (!ship.harvesters){
+                ship.harvesters = [];
+            }
 
             ship.harvesters.push(Fleet.makeHarvester());
             fleet.set("ships",fleet.data.ships);

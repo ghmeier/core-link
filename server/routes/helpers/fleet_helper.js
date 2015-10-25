@@ -144,6 +144,7 @@ module.exports = function FleetHelper(fb_root)
 
         if (!id){
             res.json({success:false,message:"Must provide a fleet id."});
+            return;
         }
 
         var fleet = new Fleet(fb_root,id,function(fleet){
@@ -165,17 +166,20 @@ module.exports = function FleetHelper(fb_root)
 
         if (!id){
             res.json({success:false,message:"Must provide a fleet id."});
+            return;
+        }
+
+        if (!req.params.position){
+            res.json({success:false,message:"Must provide a ship position."});
+            return;
         }
 
         var position = parseInt(req.params.position);
 
-        if (!position){
-            res.json({success:false,message:"Must provide a ship position."});
-        }
-
         var fleet = new Fleet(fb_root,id,function(fleet){
             if (position < 0 || position >= fleet.data.ships.length){
                 res.json({success:false,message:"Invalid position. You don't have that many ships."});
+                return;
             }
 
             res.json({success:true,data:fleet.data.ships[position]});
@@ -187,15 +191,44 @@ module.exports = function FleetHelper(fb_root)
 
         if (!id){
             res.json({success:false,message:"Must provide a fleet id."});
+            return;
         }
 
         var fleet = new Fleet(fb_root,id,function(fleet){
             res.json({success:true,data:fleet.data.ships});
+            return;
         });
     }
 
     this.add_harvester = function(req,res){
+        var id = req.params.id;
 
+        if (!id){
+            res.json({success:false,message:"Must provide a fleet id."});
+            return;
+        }
+
+        if (!req.params.position){
+            res.json({success:false,message:"Must provide a ship position."});
+            return;
+        }
+
+        var position = parseInt(req.params.position);
+
+
+        var fleet = new Fleet(fb_root,id,function(fleet){
+            if (position < 0 || position >= fleet.data.ships.length){
+                res.json({success:false,message:"Invalid position. You don't have that many ships."});
+                return;
+            }
+
+            var ship = fleet.data.ships[position];
+
+            ship.harvesters.push(Fleet.makeHarvester());
+            fleet.set("ships",fleet.data.ships);
+
+            res.json({success:true,data:fleet.data});
+        });
     }
 
 }

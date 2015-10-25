@@ -15,7 +15,8 @@ Add value to resource - GET /fleet/:id/add_resource?type=<type>&amount=<amount>
 Add a ship - GET /fleet/:id/add_ship?type=<type>
     - returns the fleet
 
-Update fleet - GET /fleet/:id/update
+Update fleet - POST /fleet/:id/update
+    - gimme all dat sweet fleet data
     - returns the fleet
 
 Upgrade fleet - GET /fleet/:id/upgrade/:upgrade_id

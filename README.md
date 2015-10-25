@@ -52,6 +52,15 @@ Get planet upgrades - GET /upgrades/planet
 Get ship upgrades - GET /upgrades/ship
     -json of ship upgrades
 
+Get ship upgrade ids of a resource - GET /upgrades/ship/find/:resource
+    -returns a json object with ids
+
+Get planet upgrade ids of a resource - GET /upgrades/planet/find/:resource
+    -returns a json object with ids
+
+Get fleet upgrade ids of a resource - GET /upgrades/fleet/find/:resource
+    -returns a json object with ids
+
 New ship/planet/fleet upgrade - POST /upgrades/<ship/planet/fleet>
     - data:{"name":"Reaserch","cost_multiplier":0,"cost":{"copper":1000,"aluminum":100,"uranium":10},"desc":"Increase your tech level!","result":{"tech":1},"result_multiplier":1}
     - returns json of upgrade with id.

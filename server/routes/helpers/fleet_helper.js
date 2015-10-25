@@ -443,9 +443,10 @@ module.exports = function FleetHelper(fb_root)
 
             harvester.level++;
             harvester.speed += harvester.level *harvester.speed;
-            fleet.set("ships",fleet.data.ships);
-
-            res.json({success:true,data:fleet.data});
+            fleet.data.resources.aluminium -= (harvester.level + 1) * 50;
+            fleet.set(fleet.data,function(data){
+                res.json({success:true,data:fleet.data});
+            });
         });
 
     }

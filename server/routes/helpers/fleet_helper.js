@@ -93,44 +93,50 @@ module.exports = function FleetHelper(fb_root)
         var planetHelper = new PlanetHelper(fb_root);
         var refId = fb_root.child("fleets").push().key();
 
-        planetHelper.makePlanet(name+"'s home world",0,false,refId,function(planet){
-            var planetId = planet.id;
-           fb_root.child("names").child(name).once("value",function(snap){
+        fb_root.child("planets").once("value",function(snapshot){
+            var count = Math.floor(Math.random() * snapshot.numChildren());
 
-                if(snap.val() != null){
-                    res.json({success:false,message:"Name "+name+" already exists."});
-                    return;
-                }
+            var parentId = Object.keys(snapshot.val())[count];
+            planetHelper.makePlanet(name+"'s home world",0,refId,parentId,function(planet){
+                var planetId = planet.id;
+               fb_root.child("names").child(name).once("value",function(snap){
 
-                var fleet = {
-                    "id" : refId,
-                    "current_planet":planetId,
-                    "fuel" : 0,
-                    "ships": [Fleet.makeShip("basic")],
-                    "search_bonus":0,
-                    "tech_level":0,
-                    "ship_max":1,
-                    "colonies": [],
-                    "resources":{
-                        "copper":0,
-                        "steel":0,
-                        "aluminium":0,
-                        "oil":0,
-                        "coal":0,
-                        "uranium":0,
-                        "water":0,
-                        "protein":0,
-                        "dna":0,
-                        "rare":0
-                    },
-                    "name":name
-                };
+                    if(snap.val() != null){
+                        res.json({success:false,message:"Name "+name+" already exists."});
+                        return;
+                    }
 
-                fb_root.child("names").child(name).set(refId);
-                fb_root.child("fleets").child(refId).set(fleet);
+                    var fleet = {
+                        "id" : refId,
+                        "current_planet":planetId,
+                        "fuel" : 0,
+                        "ships": [Fleet.makeShip("basic")],
+                        "search_bonus":0,
+                        "tech_level":0,
+                        "ship_max":1,
+                        "colonies": [],
+                        "resources":{
+                            "copper":0,
+                            "steel":0,
+                            "aluminium":0,
+                            "oil":0,
+                            "coal":0,
+                            "uranium":0,
+                            "water":0,
+                            "protein":0,
+                            "dna":0,
+                            "rare":0
+                        },
+                        "name":name
+                    };
 
-                res.json({success:true,message:"success",data:fleet});
+                    fb_root.child("names").child(name).set(refId);
+                    fb_root.child("fleets").child(refId).set(fleet);
+
+                    res.json({success:true,message:"success",data:fleet});
+                });
             });
+
         });
     }
 
@@ -227,7 +233,7 @@ module.exports = function FleetHelper(fb_root)
                     var cost = Upgrade.calcMod(parseInt(up_data.cost[id]),cost_mult,to_up.level);
 
                     if (cost > fleet.data.resources[id]){
-                        res.json({success:true,message:"Not enough "+id+" to purchase."});
+                        res.json({success:false,message:"Not enough "+id+" to purchase."});
                         return;
                     }
 
@@ -270,7 +276,87 @@ module.exports = function FleetHelper(fb_root)
     }
 
     this.upgrade_ship = function(req,res){
+        var id = req.params.id;
+        var upgrade_id = req.params.upgrade_id;
+        var position = parseInt(req.params.position);
 
+        if (!id){
+            res.json({success:false,message:"Must provide a fleet id."});
+            return;
+        }
+
+        if (!upgrade_id){
+            res.json({success:false,message:"Must provide an upgrade id."});
+            return;
+        }
+
+        var upgrade = new Upgrade(fb_root,upgrade_id,"ship",function(upgrade){
+            if (!upgrade.data){
+                res.json({success:false,message:"Upgrade does not exist."});
+                return;
+            }
+
+            var upgrade_id = upgrade.data.id;
+            var up_data = upgrade.data;
+            var fleet = new Fleet(fb_root,id,function(fleet){
+                if (!fleet.data){
+                    res.json({success:false,message:"Fleet with id "+id+" does not exist."});
+                    return;
+                }
+
+                if (!fleet.data.ships[position]){
+                    res.json({success:false,message:"No ship available at position "+position+"."});
+                    return;
+                }
+
+                if (!fleet.data.ships[0].upgrades){
+                    fleet.data.ships[0].upgrades = {};
+                }
+
+                var to_up = fleet.data.ships[0].upgrades[upgrade_id] || {level:0};
+
+                var cost_mult = parseInt(up_data.cost_multiplier);
+                var calc_cost = {};
+                for (id in up_data.cost){
+                    var cost = Upgrade.calcMod(parseInt(up_data.cost[id]),cost_mult,to_up.level);
+
+                    if (cost > fleet.data.resources[id]){
+                        res.json({success:false,message:"Not enough "+id+" to purchase."});
+                        return;
+                    }
+
+                    calc_cost[id] = cost;
+
+                }
+
+                for (id in calc_cost){
+                    fleet.data.resources[id] -= calc_cost[id];
+                }
+
+                var result_multiplier = up_data.result_multiplier;
+                for (id in up_data.result){
+
+                    var calc_reward = Upgrade.calcMod(parseInt(up_data.result[id]),
+                            parseInt(result_multiplier),to_up.level);
+
+                    fleet.data.ships[0][id] += calc_reward;
+
+
+                }
+
+                fleet.data.ships[0].upgrades[upgrade_id] = {level:to_up.level+1};
+                fleet.update(fleet.data,function(err){
+                    if (!err){
+                        res.json({success:false,message:"unable to update",data:err});
+                        return;
+                    }
+
+                    res.json({success:true,data:fleet.data});
+                });
+
+            });
+
+        });
     }
 
     this.get_ship = function(req,res){

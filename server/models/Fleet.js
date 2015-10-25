@@ -13,9 +13,16 @@ function Fleet(fb_root,id,callback){
 
     fleet.once("value",function(snap){
         self.data = snap.val();
+
+        self.data.harvester_cost = Fleet.harvesterost;
         callback(self);
 
     });
+}
+
+
+Fleet.harvesterCost = function(num){
+    return num * num + 100;
 }
 
 Fleet.prototype.getFirebaseLocation = function(){

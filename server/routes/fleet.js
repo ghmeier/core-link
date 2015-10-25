@@ -24,7 +24,7 @@ module.exports = function(app, FleetHelper, fb_root){
     app.get(ship_path+":position",function(req,res){
         fleetHelper.get_ship(req,res);
     });
-    app.get(ship_path+":position/upgrade",function(req,res){
+    app.get(ship_path+":position/upgrade/:upgrade_id",function(req,res){
         fleetHelper.upgrade_ship(req,res);
     });
     app.get(ship_path+":position/add_harvester",function(req,res){

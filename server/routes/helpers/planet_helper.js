@@ -43,7 +43,7 @@ module.exports = function PlanetHelper(fb_root)
             return;
         }
 
-        this.makePlanet(size,res.query.connect,res.query.discoverer,res.query.parentId,function(planet){
+        this.makePlanet(size,res.query.discoverer,res.query.parentId,function(planet){
             res.json({success:true,message:"success",data:planet});
         });
 
@@ -101,7 +101,7 @@ module.exports = function PlanetHelper(fb_root)
                         var cost = Upgrade.calcMod(parseInt(up_data.cost[id]),cost_mult,to_up.level);
 
                         if (cost > fleet.data.resources[id]){
-                            res.json({success:true,message:"Not enough "+id+" to purchase."});
+                            res.json({success:false,message:"Not enough "+id+" to purchase."});
                             return;
                         }
 
@@ -157,27 +157,26 @@ module.exports = function PlanetHelper(fb_root)
 
     }
 
-    this.makePlanet = function(name,size,connect,discoverer,parentId,callback){
+    this.makePlanet = function(name,size,discoverer,parentId,callback){
         var refId = fb_root.child("planets").push().key();
         var resources = this.getResources(size);
-        var connections = [];
-        if (connect){
-            connections = this.getConnections(parentId);
-        }
+        var connections = this.getConnections(parentId,function(connections){
 
-        var planet = {
-            "id" : refId,
-            "connections": connections,
-            "colonies": [],
-            "size":size,
-            "resources":resources,
-            "name":name,
-            "discoverer":discoverer
-        };
+            var planet = {
+                "id" : refId,
+                "connections": connections,
+                "colonies": [],
+                "size":size,
+                "resources":resources,
+                "name":name,
+                "discoverer":discoverer
+            };
+            console.log(planet);
+            fb_root.child("planets").child(refId).set(planet);
 
-        fb_root.child("planets").child(refId).set(planet);
+            callback(planet);
 
-        callback(planet);
+        });
     }
 
     this.get_planet = function(req,res){
@@ -235,10 +234,40 @@ module.exports = function PlanetHelper(fb_root)
         return resNew;
     }
 
-    this.getConnections = function(parentId){
-        var connections = [parentId];
+    this.getConnections = function(parentId,callback){
+        var connections = [];
+        var distance = Math.random() * 1000;
 
-        return connections;
+        if (!parentId){
+            return [];
+        }
+
+        connections.push({id:parentId,weight:distance});
+        console.log(connections);
+
+        var parent = new Planet(fb_root,parentId,function(parent){
+            if (!parent.data){
+                res.json({success:false,message:"Parent planet does not exist."});
+                return;
+            }
+            if (!parent.data.connections){
+                parent.data.connections = [];
+            }
+            var num = Math.floor(Math.random() * parent.data.connections.length);
+
+            var used = {};
+            for (i=0;i<num;i++){
+                var prospect = parent.data.connections[Math.floor(Math.random() * parent.data.connections.length)];
+                if (!used[prospect.id]){
+                    used[prospect.id] = true;
+                    connections.push({id:prospect.id,weight:distance+prospect.weight});
+                }
+            }
+
+            parent.data.connections.push({id:this.id,weight:distance});
+            console.log(connections);
+            callback(connections);
+        });
     }
 
 }

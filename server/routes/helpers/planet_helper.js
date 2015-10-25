@@ -45,10 +45,10 @@ module.exports = function PlanetHelper(fb_root)
 
         var size = this.getSize(parseInt(req.query.size_mod));
 
-        if (!size){
+        /*if (!size){
             res.json({success:false,message:"Must provide a size for a planet."});
             return;
-        }
+        }*/
 
         this.makePlanet(req.query.name,size,req.query.discoverer,req.query.parentId,distance,function(planet){
             res.json({success:true,message:"success",data:planet});

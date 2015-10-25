@@ -1,4 +1,5 @@
 var Fleet = require("../../models/Fleet.js");
+var Upgrade = require("../../models/Upgrade.js");
 var PlanetHelper = require("./planet_helper.js");
 
 module.exports = function FleetHelper(fb_root)
@@ -20,9 +21,14 @@ module.exports = function FleetHelper(fb_root)
                 return;
             }
 
-            fb_root.child("fleets").child(snap.val()).once("value",function(snapshot){
+            var id = snap.val();
+            var fleet = new Fleet(fb_root,id,function(){
+                if (!fleet.data){
+                    res.json({success:false,message:"Fleet with id "+id+" does not exist."});
+                    return;
+                }
 
-                res.json({success:true,data:snapshot.val()});
+                res.json({success:true,data:fleet.data});
             });
 
         });
@@ -36,13 +42,13 @@ module.exports = function FleetHelper(fb_root)
             res.json({success:false,message:"Must provide a valid id."});
         }
 
-        fb_root.child("fleets").child(id).once("value",function(snap){
-            if (!snap || !snap.val()){
+        var fleet = new Fleet(fb_root,id,function(){
+            if (!fleet.data){
                 res.json({success:false,message:"Fleet with id "+id+" does not exist."});
                 return;
             }
 
-            res.json({success:true,data:snap.val()});
+            res.json({success:true,data:fleet.data});
         });
     }
 
@@ -63,6 +69,11 @@ module.exports = function FleetHelper(fb_root)
         }
 
         var fleet = new Fleet(fb_root,id,function(fleet){
+            if (!fleet.data){
+                res.json({success:false,message:"Fleet with id "+id+" does not exist."});
+                return;
+            }
+
             fleet.data.resources[type] += amount;
             fleet.set("resources",fleet.data.resources);
 
@@ -130,6 +141,11 @@ module.exports = function FleetHelper(fb_root)
         }
 
         var fleet = new Fleet(fb_root,id,function(fleet){
+            if (!fleet.data){
+                res.json({success:false,message:"Fleet with id "+id+" does not exist."});
+                return;
+            }
+
             var ships = fleet.get("ships") || [];
             ships.push(Fleet.makeShip("basic"));
             fleet.set("ships",ships);
@@ -141,20 +157,104 @@ module.exports = function FleetHelper(fb_root)
 
     this.update_fleet = function(req,res){
         var id = req.params.id;
+        var data = JSON.parse(Object.keys(req.body));
 
         if (!id){
             res.json({success:false,message:"Must provide a fleet id."});
             return;
         }
 
+        if (!data){
+            res.json({success:false,message:"No new data."});
+            return;
+        }
+
         var fleet = new Fleet(fb_root,id,function(fleet){
-            fleet.update(fleet.data);
-            res.json({success:true,data:fleet.data});
-        })
+            if (!fleet.data){
+                res.json({success:false,message:"Fleet with id "+id+" does not exist."});
+                return;
+            }
+
+            fleet.update(data);
+            res.json({success:true,data:data});
+        });
     }
 
     this.upgrade = function(req,res){
+        var id = req.params.id;
 
+        if (!id){
+            res.json({success:false,message:"Must provide a fleet id."});
+            return;
+        }
+
+        var upgrade = new Upgrade(fb_root,id,"fleet",function(upgrade){
+            if (!upgrade.data){
+                res.json({success:false,message:"Upgrade does not exist."});
+                return;
+            }
+
+            var upgrade_id = upgrade.data.id;
+            var up_data = upgrade.data;
+            var fleet = new Fleet(fb_root,id,function(fleet){
+                if (!fleet.data){
+                    res.json({success:false,message:"Fleet with id "+id+" does not exist."});
+                    return;
+                }
+
+                if (!fleet.data.upgrades){
+                    fleet.data.upgrades = {};
+                }
+
+                var to_up = fleet.data.upgrades[upgrade_id] || {level:0};
+
+                var cost_mult = parseInt(up_data.cost_multiplier);
+                var calc_cost = {};
+                for (id in up_data.cost){
+                    var cost = calcMod(parseInt(up_data.cost[id]),cost_mult,to_up.level);
+
+                    if (cost > fleet.data.resources[id]){
+                        res.json({success:true,message:"Not enough "+id+" to purchase."});
+                        return;
+                    }
+
+                    calc_cost[id] = cost;
+
+                }
+
+                for (id in calc_cost){
+                    fleet.data.resources[id] - calc_cost[id];
+                }
+
+                for (id in up_data.result){
+                    var parsed_id = id.split("-");
+
+                    var calc_reward = calcMod(parseInt(up_data.result[id]),
+                            parseInt(result_multiplier),to_up.level);
+
+                    if (parsed_id[0] == "resources" && parsed_id.length > 1){
+                        fleet.data.resources[parsed_id[1]] += calc_reward;
+                    }else{
+                        fleet.data[parsed_id[0]] += calc_reward;
+                    }
+
+                }
+
+                fleet.data.upgrades[upgrade_id] = {level:to_up.level+1};
+                fleet.update(fleet.data);
+                res.json({success:true,data:fleet.data});
+            });
+
+        });
+
+    }
+
+    this.calcMod = function(val,modifier,iters){
+        if (iters == 0){
+            return val;
+        }
+
+        return calcMod(val,modifier,iters-1)*modifier;
     }
 
     this.upgrade_ship = function(req,res){

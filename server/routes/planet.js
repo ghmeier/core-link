@@ -8,4 +8,7 @@ module.exports = function(app, PlanetHelper, fb_root){
     app.get(path+":id",function(req,res){
         planetHelper.get_planet(req,res);
     });
+    app.get(path+":id/upgrade",function(req,res){
+        planetHelper.upgrade(req,res);
+    });
 }

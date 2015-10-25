@@ -33,8 +33,11 @@ Fleet.prototype.save = function(data){
 }
 
 Fleet.prototype.set = function(key,val){
-
     this.getFirebaseLocation().child(key).set(val);
+}
+
+Fleet.prototype.update = function(data){
+    this.getFirebaseLocation().set(data);
 }
 
 Fleet.makeShip = function(type){
@@ -45,7 +48,16 @@ Fleet.makeShip = function(type){
         "population":1,
         "population_max":10,
         "durability":100,
-        "durability_max":100
+        "durability_max":100,
+        "harvesters":[]
+    };
+}
+
+Fleet.makeHarvester = function(){
+    return harvester = {
+        "level":0,
+        "speed":1,
+        "multiplier":1
     };
 }
 

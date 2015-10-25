@@ -125,7 +125,7 @@ module.exports = function FleetHelper(fb_root)
         var id = req.params.id;
 
         if (!id){
-            res.json({success:false,message:"Must Provide ship id."});
+            res.json({success:false,message:"Must provide fleet id."});
             return;
         }
 
@@ -138,4 +138,64 @@ module.exports = function FleetHelper(fb_root)
 
         });
     }
+
+    this.update_fleet = function(req,res){
+        var id = req.params.id;
+
+        if (!id){
+            res.json({success:false,message:"Must provide a fleet id."});
+        }
+
+        var fleet = new Fleet(fb_root,id,function(fleet){
+            fleet.update(fleet.data);
+            res.json({success:true,data:fleet.data});
+        })
+    }
+
+    this.upgrade = function(req,res){
+
+    }
+
+    this.upgrade_ship = function(req,res){
+
+    }
+
+    this.get_ship = function(req,res){
+        var id = req.params.id;
+
+        if (!id){
+            res.json({success:false,message:"Must provide a fleet id."});
+        }
+
+        var position = parseInt(req.params.position);
+
+        if (!position){
+            res.json({success:false,message:"Must provide a ship position."});
+        }
+
+        var fleet = new Fleet(fb_root,id,function(fleet){
+            if (position < 0 || position >= fleet.data.ships.length){
+                res.json({success:false,message:"Invalid position. You don't have that many ships."});
+            }
+
+            res.json({success:true,data:fleet.data.ships[position]});
+        });
+    }
+
+    this.get_ships = function(req,res){
+        var id = req.params.id;
+
+        if (!id){
+            res.json({success:false,message:"Must provide a fleet id."});
+        }
+
+        var fleet = new Fleet(fb_root,id,function(fleet){
+            res.json({success:true,data:fleet.data.ships});
+        });
+    }
+
+    this.add_harvester = function(req,res){
+
+    }
+
 }

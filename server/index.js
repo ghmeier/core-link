@@ -20,7 +20,7 @@ var fb_root = new Firebase("https://core-link.firebaseio.com");
 var app = express();
 
 //Helpers
-var FleetHelper = require("./helpers/fleet_helper.js");
+var FleetHelper = require("./routes/helpers/fleet_helper.js");
 
 app.engine("html",swig.renderFile);
 app.set("views",path.join(__dirname,"views"));

@@ -15,6 +15,9 @@ var corsOptions = {
 
 var app = express();
 
+//Helpers
+var FleetHelper = require("./helpers/fleet_helper.js");
+
 app.engine("html",swig.renderFile);
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","html");
@@ -37,6 +40,8 @@ app.use(passport.session());
 app.use(cors(corsOptions));
 
 var routes = require("./routes.js");
+
+require('./routes/fleet')(app, FleetHelper);
 routes(app,passport);
 
 module.exports = app;

@@ -1,4 +1,5 @@
 var Fleet = require("../../models/Fleet.js");
+var PlanetHelper = require("./planet_helper.js");
 
 module.exports = function FleetHelper(fb_root)
 {
@@ -41,6 +42,30 @@ module.exports = function FleetHelper(fb_root)
         });
     }
 
+    this.add_resource = function(req,res){
+        var id = req.params.id;
+        var type = req.query.type;
+        var amount = parseInt(req.query.amount);
+
+        var planetHelper = new PlanetHelper(fb_root);
+
+        if (!id || id == ""){
+            res.json({success:false,message:"Must provide id."});
+            return;
+        }
+
+        if (!type || !planetHelper.res_data[type]){
+            res.json({success:false,message:"type must be "+Object.keys(planetHelper.res_data).join(",")});
+        }
+
+        var fleet = new Fleet(fb_root,id,function(fleet){
+            fleet.data.resources[type] += amount;
+            fleet.set("resources",fleet.data.resources);
+
+            res.json({success:true,data:fleet.data});
+        });
+    }
+
     this.new_fleet = function(req,res){
         var name = req.query.name;
 
@@ -49,38 +74,46 @@ module.exports = function FleetHelper(fb_root)
             return;
         }
 
-        fb_root.child("names").child(name).once("value",function(snap){
+        var planetHelper = new PlanetHelper(fb_root);
+        planetHelper.makePlanet(0,false,function(planet){
+            var planetId = planet.id;
+           fb_root.child("names").child(name).once("value",function(snap){
 
-            if(snap.val() != null){
-                res.json({success:false,message:"Name "+name+" already exists."});
-                return;
-            }
+                if(snap.val() != null){
+                    res.json({success:false,message:"Name "+name+" already exists."});
+                    return;
+                }
 
-            var refId = fb_root.child("fleets").push().key();
+                var refId = fb_root.child("fleets").push().key();
 
-            var fleet = {
-                "id" : refId,
-                "fuel" : 0,
-                "ships": [Fleet.makeShip("basic")],
-                "colonies": [],
-                "resources":{
-                    "copper":0,
-                    "steel":0,
-                    "aluminum":0,
-                    "oil":0,
-                    "coal":0,
-                    "uranium":0,
-                    "water":0,
-                    "protein":0
-                },
-                dna:0,
-                name:name
-            };
+                var fleet = {
+                    "id" : refId,
+                    "current_planet":planetId,
+                    "fuel" : 0,
+                    "ships": [Fleet.makeShip("basic")],
+                    "search_bonus":0,
+                    "tech_level":0,
+                    "colonies": [],
+                    "resources":{
+                        "copper":0,
+                        "steel":0,
+                        "aluminum":0,
+                        "oil":0,
+                        "coal":0,
+                        "uranium":0,
+                        "water":0,
+                        "protein":0,
+                        "dna":0,
+                        "rare":0
+                    },
+                    "name":name
+                };
 
-            fb_root.child("names").child(name).set(refId);
-            fb_root.child("fleets").child(refId).set(fleet);
+                fb_root.child("names").child(name).set(refId);
+                fb_root.child("fleets").child(refId).set(fleet);
 
-            res.json({success:true,message:"success",data:fleet});
+                res.json({success:true,message:"success",data:fleet});
+            });
         });
     }
 

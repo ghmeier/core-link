@@ -3,7 +3,7 @@ var Planet = require("../../models/Planet.js");
 module.exports = function PlanetHelper(fb_root)
 {
     var helper = this;
-    var resources = {
+    this.res_data = {
         "steel":{
             mod:0.1
         },
@@ -29,27 +29,44 @@ module.exports = function PlanetHelper(fb_root)
             mod:0.1
         }
     };
-    var res_min = [1,2,4,6,8];
+    var res_min = [1,2,3,5,7];
 
     this.fb_root = fb_root;
 
     this.new_planet = function(req,res){
+        var size = this.getSize(parseInt(req.query.size_mod));
+
+        if (!size){
+            res.json({success:false,message:"Must provide a size for a planet."});
+            return;
+        }
+
+        this.makePlanet(size,res.query.connect,function(planet){
+            res.json({success:true,message:"success",data:planet});
+        });
+
+    }
+
+    this.makePlanet = function(size,connect,callback){
         var refId = fb_root.child("planets").push().key();
-        var size = Math.floor(Math.random()*5);
+        var resources = this.getResources(size);
+        var connections = [];
+        if (connect){
+            connections = this.getConnections();
+        }
 
         var planet = {
             "id" : refId,
-            "connections": [],
+            "connections": connections,
             "colonies": [],
             "size":size,
-            "resources":this.getResources(),
+            "resources":resources,
 
         };
 
         fb_root.child("planets").child(refId).set(planet);
 
-        res.json({success:true,message:"success",data:planet});
-
+        callback(planet);
     }
 
     this.get_planet = function(req,res){
@@ -70,22 +87,45 @@ module.exports = function PlanetHelper(fb_root)
         });
     }
 
+    this.getSize = function(size_mod){
+        if (!size_mod){
+            size_mod = 1;
+        }
+
+        var chance = Math.floor(Math.random() * 1000) + size_mod;
+
+        if (chance < 500){
+            return 0;
+        }else if(chance < 800){
+            return 1;
+        }else if(chance < 900){
+            return 2;
+        }else if (chance < 980){
+            return 3;
+        }else{
+            return 4;
+        }
+    }
+
     this.getResources = function(size){
-        var resName = Object.keys(resources);
+        var resName = Object.keys(this.res_data);
 
         var resNum = res_min[size];
         var resNew = [];
 
         for (i=0;i<resNum;i++){
             var current = {};
-
             current.type = resName[Math.floor(Math.random()*resName.length)];
-            current.abundance = resources[resName].mod + Math.random();
+            current.abundance = this.res_data[current.type].mod + Math.random();
+            current.mod = 1;
             resNew.push(current);
-
         }
 
         return resNew;
+    }
+
+    this.getConnections = function(){
+
     }
 
 }

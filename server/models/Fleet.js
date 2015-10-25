@@ -39,7 +39,13 @@ Fleet.prototype.set = function(key,val){
 
 Fleet.makeShip = function(type){
     return ship = {
-        "type":type
+        "type":type,
+        "capacity":100,
+        "food":0,
+        "population":1,
+        "population_max":10,
+        "durability":100,
+        "durability_max":100
     };
 }
 

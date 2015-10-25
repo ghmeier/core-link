@@ -164,9 +164,11 @@ module.exports = function FleetHelper(fb_root)
             var alu_cost = ships.length * (ships.length * 50);
             var oil_cost = (ships.length * 500) / 15;
             var steel_cost = Math.pow(16,ships.length) + 100;
+            var copper_cost = (Math.random() * 500 + 500) * ships.length;
             if (fleet.data.resources["steel"] < steel_cost ||
                 fleet.data.resources['aluminium'] < alu_cost ||
-                fleet.data.resources['oil'] < oil_cost){
+                fleet.data.resources['oil'] < oil_cost ||
+                fleet.data.resources['copper'] < copper_cost){
                 res.json({success:false,message:"Not enough resources."});
                 return;
             }
@@ -174,6 +176,7 @@ module.exports = function FleetHelper(fb_root)
             fleet.data.resources["steel"] -= steel_cost;
             fleet.data.resources['aluminium'] -=alu_cost;
             fleet.data.resources['oil'] -= oil_cost;
+            fleet.data.resources['copper'] -= copper_cost;
             ships.push(Fleet.makeShip("basic"));
             fleet.update(fleet.data, function(data){
 

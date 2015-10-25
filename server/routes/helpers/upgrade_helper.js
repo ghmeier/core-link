@@ -44,7 +44,7 @@ module.exports = function UpgradeHelper(fb_root)
 
     this.find_upgrade = function(type,name,callback){
         fb_root.child(type+"_result").child(name).once("value",function(snap){
-            var data = {type:type};
+            var data = {type:name};
             data.ids = snap.val();
             callback(data);
         });

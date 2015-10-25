@@ -1,5 +1,6 @@
 var Planet = require("../../models/Planet.js");
 var Upgrade = require("../../models/Upgrade.js");
+var Fleet = require("../../models/Fleet.js");
 
 module.exports = function PlanetHelper(fb_root)
 {
@@ -91,6 +92,7 @@ module.exports = function PlanetHelper(fb_root)
                         res.json({success:false,message:"Fleet with id "+fleet_id+" does not exist."});
                         return;
                     }
+
                     var to_up = planet.data.upgrades[upgrade_id] || {level:0};
 
                     var cost_mult = parseInt(up_data.cost_multiplier);

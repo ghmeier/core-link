@@ -101,7 +101,7 @@ module.exports = function FleetHelper(fb_root)
                     "resources":{
                         "copper":0,
                         "steel":0,
-                        "aluminum":0,
+                        "aluminium":0,
                         "oil":0,
                         "coal":0,
                         "uranium":0,

@@ -22,7 +22,8 @@ module.exports = function FleetHelper(fb_root)
             }
 
             var id = snap.val();
-            var fleet = new Fleet(fb_root,id,function(){
+
+            var fleet = new Fleet(fb_root,id,function(fleet){
                 if (!fleet.data){
                     res.json({success:false,message:"Fleet with id "+id+" does not exist."});
                     return;
@@ -42,7 +43,7 @@ module.exports = function FleetHelper(fb_root)
             res.json({success:false,message:"Must provide a valid id."});
         }
 
-        var fleet = new Fleet(fb_root,id,function(){
+        var fleet = new Fleet(fb_root,id,function(fleet){
             if (!fleet.data){
                 res.json({success:false,message:"Fleet with id "+id+" does not exist."});
                 return;
@@ -157,7 +158,7 @@ module.exports = function FleetHelper(fb_root)
 
     this.update_fleet = function(req,res){
         var id = req.params.id;
-        var data = JSON.parse(Object.keys(req.body));
+        var data = req.body;
 
         if (!id){
             res.json({success:false,message:"Must provide a fleet id."});
@@ -175,8 +176,13 @@ module.exports = function FleetHelper(fb_root)
                 return;
             }
 
-            fleet.update(data);
-            res.json({success:true,data:data});
+            fleet.update(data,function(val){
+                if (!val){
+                    res.json({success:true,data:data});
+                }else{
+                    res.json({success:false,message:"Can't update firebase."});
+                }
+            });
         });
     }
 

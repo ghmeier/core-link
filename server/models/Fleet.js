@@ -7,9 +7,9 @@ function Fleet(fb_root,id,callback){
     var self = this;
 
     var fleet = this.getFirebaseLocation();
-
     fleet.on("value",function(snap){
         self.data = snap.val();
+        console.log(snap.val());
     });
 
     fleet.once("value",function(snap){
@@ -36,8 +36,8 @@ Fleet.prototype.set = function(key,val){
     this.getFirebaseLocation().child(key).set(val);
 }
 
-Fleet.prototype.update = function(data){
-    this.getFirebaseLocation().set(data);
+Fleet.prototype.update = function(data,callback){
+    this.getFirebaseLocation().set(data,callback(data));
 }
 
 Fleet.makeShip = function(type){

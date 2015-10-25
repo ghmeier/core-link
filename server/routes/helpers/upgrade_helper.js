@@ -20,7 +20,7 @@ module.exports = function UpgradeHelper(fb_root)
     this.new_upgrade = function(type,req,callback){
         var refId = fb_root.child(type+"_upgrades").push().key();
 
-        var data = JSON.parse(Object.keys(req.body));
+        var data = req.body;
         data.id = refId;
         fb_root.child(type+"_upgrades").child(refId).set(data);
 

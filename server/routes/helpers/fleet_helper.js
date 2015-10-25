@@ -6,7 +6,7 @@ module.exports = function FleetHelper(fb_root)
 	var helper = this;
     this.fb_root = fb_root;
 
-    this.get_fleet_id = function(req,res){
+    this.get_fleet_by_id = function(req,res){
         var name = req.query.name;
 
         if (name == undefined || name == "" || !/[0-9a-zA-Z]/.test(name)){
@@ -20,7 +20,11 @@ module.exports = function FleetHelper(fb_root)
                 return;
             }
 
-            res.json({success:true,data:{id:snap.val()}});
+            fb_root.child("fleets").child(snap.val()).once("value",function(snapshot){
+
+                res.json({success:true,data:snapshot.val()});
+            });
+
         });
 
     }

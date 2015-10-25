@@ -15,6 +15,6 @@ module.exports = function(app, FleetHelper, fb_root){
         fleetHelper.get_fleet(req,res);
     });
     app.get(path,function(req,res){
-        fleetHelper.get_fleet_id(req,res);
+        fleetHelper.get_fleet_by_id(req,res);
     });
 }

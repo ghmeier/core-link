@@ -212,13 +212,13 @@ module.exports = function PlanetHelper(fb_root)
             return;
         }
 
-        fb_root.child("planets").child(id).once("value",function(snap){
-            if (!snap || !snap.val()){
+        var parent = new Planet(fb_root,id,function(parent){
+            if (!parent || !parent.data){
                 res.json({success:false,message:"Planet does not exist."});
                 return;
             }
 
-            res.json({success:true,data:snap.val()});
+            res.json({success:true,data:parent.data});
         });
     }
 

@@ -181,11 +181,12 @@ module.exports = function PlanetHelper(fb_root)
     this.makePlanet = function(name,size,discoverer,parentId,distance,callback){
         var refId = fb_root.child("planets").push().key();
         var resources = this.getResources(size);
-        var connections = this.getConnections(refId,parentId,distance,function(connections){
 
         if (!name){
             name = refId.substring(3,9);
         }
+
+        var connections = this.getConnections(refId,name,parentId,distance,function(connections){
 
             var planet = {
                 "id" : refId,
@@ -259,7 +260,7 @@ module.exports = function PlanetHelper(fb_root)
         return resNew;
     }
 
-    this.getConnections = function(refId,parentId,distance,callback){
+    this.getConnections = function(refId,name,parentId,distance,callback){
         var connections = [];
 
         if (!parentId || parentId == ""){
@@ -284,17 +285,17 @@ module.exports = function PlanetHelper(fb_root)
                 var prospect = parent.data.connections[Math.floor(Math.random() * parent.data.connections.length)];
                 if (!used[prospect.id]){
                     used[prospect.id] = distance+prospect.weight;
-                    connections.push({id:prospect.id,weight:distance+prospect.weight});
+                    connections.push({id:prospect.id,weight:distance+prospect.weight, name: prospect.name | ""});
                 }
             }
 
 
-            parent.data.connections.push({id:refId,weight:distance});
+            parent.data.connections.push({id:refId,weight:distance,name: name});
             parent.set("connections",parent.data.connections);
 
             for (id in used){
                 new Planet(fb_root,id,function(conn){
-                    conn.data.connections.push({id:refId,weight:used[id]});
+                    conn.data.connections.push({id:refId,weight:used[id],name:name});
                     conn.set("connections",conn.data.connections);
                 })
             }

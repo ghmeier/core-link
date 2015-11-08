@@ -24,7 +24,6 @@ Upgrade.prototype.getFirebaseLocation = function(type){
 }
 
 Upgrade.calcMod = function(val,modifier,iters){
-        console.log(val,modifier,iters,val*Math.pow(modifier,iters));
         return val*Math.pow(modifier,iters);
 }
 

@@ -31,6 +31,7 @@ module.exports = function PlanetHelper(fb_root)
             mod:0.1
         }
     };
+
     var res_min = [1,2,3,5,7];
 
     this.fb_root = fb_root;
@@ -302,6 +303,10 @@ module.exports = function PlanetHelper(fb_root)
 
             callback(connections);
         });
+    }
+
+    this.getResData = function(){
+        return this.res_data;
     }
 
 }

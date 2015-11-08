@@ -240,6 +240,7 @@ module.exports = function FleetHelper(fb_root)
 
             var upgrade_id = upgrade.data.id;
             var up_data = upgrade.data;
+
             var fleet = new Fleet(fb_root,id,function(fleet){
                 if (!fleet.data){
                     res.json({success:false,message:"Fleet with id "+id+" does not exist."});
@@ -257,7 +258,7 @@ module.exports = function FleetHelper(fb_root)
                 for (id in up_data.cost){
                     var cost = Upgrade.calcMod(parseInt(up_data.cost[id]),cost_mult,to_up.level);
 
-                    if (cost > fleet.data.resources[id]){
+                    if (cost > parseInt(fleet.data.resources[id]) ){
                         res.json({success:false,message:"Not enough "+id+" to purchase."});
                         return;
                     }
@@ -267,16 +268,18 @@ module.exports = function FleetHelper(fb_root)
                 }
 
                 for (id in calc_cost){
-                    fleet.data.resources[id] -= calc_cost[id];
+                    fleet.data.resources[id] = parseInt(fleet.data.resources[id]) - calc_cost[id];
                 }
 
                 var result_multiplier = up_data.result_multiplier;
+
                 for (id in up_data.result){
 
                     var calc_reward = Upgrade.calcMod(parseInt(up_data.result[id]),
                             parseInt(result_multiplier),to_up.level);
 
-                    if (PlanetHelper.res_data[id]){
+                    var planetHelper = new PlanetHelper(fb_root);
+                    if (planetHelper.getResData()[id]){
                         fleet.data.resources[id] += calc_reward;
                     }else{
                         fleet.data[id] += calc_reward;
@@ -286,8 +289,8 @@ module.exports = function FleetHelper(fb_root)
 
                 fleet.data.upgrades[upgrade_id] = {level:to_up.level+1};
                 fleet.update(fleet.data,function(err){
-                    if (err){
-                        res.json({success:false,message:"unable to update",data:err});
+                    if (!err){
+                        res.json({success:false,message:"unable to update"});
                         return;
                     }
 

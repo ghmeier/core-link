@@ -294,7 +294,7 @@ module.exports = function FleetHelper(fb_root)
                         return;
                     }
 
-                    res.json({success:true,data:data});
+                    res.json({success:true,data:fleet.data});
                 });
 
             });

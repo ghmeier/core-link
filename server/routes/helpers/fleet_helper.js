@@ -275,7 +275,7 @@ module.exports = function FleetHelper(fb_root)
                     var calc_reward = Upgrade.calcMod(parseInt(up_data.result[id]),
                             parseInt(result_multiplier),to_up.level);
 
-                    if (planetHelper.res_data[id]){
+                    if (PlanetHelper.res_data[id]){
                         fleet.data.resources[id] += calc_reward;
                     }else{
                         fleet.data[id] += calc_reward;

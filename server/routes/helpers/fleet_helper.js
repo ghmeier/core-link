@@ -208,9 +208,10 @@ module.exports = function FleetHelper(fb_root)
             }
 
             fleet.update(data,function(val){
-                if (!val){
+                if (val){
                     res.json({success:true,data:data});
                 }else{
+                    //console.log(val);
                     res.json({success:false,message:"Can't update firebase."});
                 }
             });

@@ -13,6 +13,11 @@ function Fleet(fb_root,id,callback){
 
     fleet.once("value",function(snap){
         self.data = snap.val();
+        if (!self.data){
+            callback({data:null});
+            return;
+        }
+
         if (!self.data.ships){
             self.data.ships = [Fleet.makeShip("basic")];
         }

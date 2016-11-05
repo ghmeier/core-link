@@ -1,0 +1,11 @@
+language: java 
+jdk: oraclejdk8
+node_js:
+  - "6"
+addons:
+  sonarqube: true
+env:
+  global:
+    - secure: "maqR/ZFyjn2M18JLNJFnMtcfQPU3SijN7nzO0dI6i9lOT2gNKoWFvQU2FlaP3tFXTfNhqQmsvrl5bcCpz5JDJL1ywJ+96DbeEfd6xfcdtsgrUSlm1XStEa6MKQ7YIcs15vQ0xi78H6XFXuXmZW4Nw6DkitF843wRh56w0d1Ac07PJ0SSNkApnevUvqSbumXK8ZnoTASdB+40mlzukdLMnK/Lb4anXjiGKdpVa3zSgWkLiYzNBh3Tj2QB+bFEarSUVp+Hq4lZwWF1XCXk8zyW8E01Mb4dQWlqg+3Q3R2Da+dSQdKv5f3KhcPhBlDsl2+YIidm3iGOfec24wDoj4dbMZKrDRgyGCssiGlTuRIMcFZ8O25xrQCWE//Z17Btq1fIvf5ysArcmnoxtR/xYgW3/LOQhkIszQrB3f/tvVrhFkrFJndVHnXNQNMccdOBRBzArenVGMzfzXAu1Ep6MjUBqb4AmSn4DFOF7Glbv7A4HlVrGCEIGsiN80p4JliKOJ67Z0JlswFEw8DxiIDDF+PGqCvZmvNumI7UjwWD178eSUcTIMU0Aq9wEYOYv70nqHEMH2VJ7x9MxTlwbHp+vjoEEA01ihXR5vyxauXxWkgNm1nskLv8K/snJgfuYim8MfIegumZbMjj336S0IR1etmHKktmAccv3AHc30OGXTrfNtQ="
+script:
+  - sonar-scanner -Dsonar.login=$CORELINK_SONAR_TOKEN
